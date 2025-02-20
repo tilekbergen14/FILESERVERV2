@@ -81,3 +81,18 @@ func GetFile(bucketName, objectName string) ([]byte, error) {
 	file, err := io.ReadAll(object)
 	return file, err
 }
+
+func ServeFile(bucketName, objectName string) ([]byte, string, error) {
+	object, err := mioClient.GetObject(context.Background(), bucketName, objectName, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, "", fmt.Errorf("unable to retrieve file from MinIO: %w", err)
+	}
+	defer object.Close()
+
+	file, err := io.ReadAll(object)
+	if err != nil {
+		return nil, "", fmt.Errorf("unable to read file content: %w", err)
+	}
+
+	return file, "application/octet-stream", nil
+}

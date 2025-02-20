@@ -9,6 +9,8 @@ import (
 func Fileserver(router *gin.Engine) {
 	router.POST("/sendfile", handlers.UploadFileHandler)
 	router.POST("/download", handlers.DownloadFileHandler)
-	// router.POST("/clientpost", handlers.UploadFileHandler)
+	router.POST("/clientdownload", handlers.DownloadFileHandler)
+
+	router.GET("/serve", handlers.ServeFileHandler) 
 }
 

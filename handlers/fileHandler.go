@@ -4,6 +4,7 @@ import (
 	"fileserver/services"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,8 +25,8 @@ func UploadFileHandler(c *gin.Context) {
 
 	customUuid := c.Request.PostFormValue("customUuid")
 	subRootFolder := c.Request.PostFormValue("subrootfolder")
-
 	filePath, err := services.UploadFile(subRootFolder, customUuid, fileContent, file.Filename)
+	fmt.Println(filePath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload file"})
 		return
@@ -69,4 +70,23 @@ func DownloadFileHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to send file: %v", err)})
 		return
 	}
+}
+
+func ServeFileHandler(c *gin.Context) {
+    filePath := c.DefaultQuery("path", "")
+    if filePath == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Path parameter is required"})
+        return
+    }
+
+    filePath = strings.Trim(filePath, "\"")
+
+   	file, contentType, err := services.ServeFile("destination", filePath) 
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+		return
+	}
+	c.Header("Content-Type", contentType)
+	c.Status(http.StatusOK)
+	c.Writer.Write(file) 
 }
