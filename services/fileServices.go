@@ -56,7 +56,7 @@ func UploadFile(subfolder string, customUuid string, fileContent io.Reader, orig
 	}
 	_, err := mioClient.PutObject(
 		context.Background(), 
-		"destination",     
+		config.MinioBucket,     
 		filePath,     
 		fileContent,    
 		-1, 

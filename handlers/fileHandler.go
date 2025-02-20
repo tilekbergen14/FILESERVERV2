@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fileserver/config"
 	"fileserver/services"
 	"fmt"
 	"net/http"
@@ -26,8 +27,8 @@ func UploadFileHandler(c *gin.Context) {
 	customUuid := c.Request.PostFormValue("customUuid")
 	subRootFolder := c.Request.PostFormValue("subrootfolder")
 	filePath, err := services.UploadFile(subRootFolder, customUuid, fileContent, file.Filename)
-	fmt.Println(filePath)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload file"})
 		return
 	}
@@ -51,7 +52,7 @@ func DownloadFileHandler(c *gin.Context) {
 		return
 	}
 
-	file, err := services.GetFile("destination", request.FilePath)
+	file, err := services.GetFile(config.MinioBucket, request.FilePath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to get file: %v", err)})
 		return
@@ -81,7 +82,7 @@ func ServeFileHandler(c *gin.Context) {
 
     filePath = strings.Trim(filePath, "\"")
 
-   	file, contentType, err := services.ServeFile("destination", filePath) 
+   	file, contentType, err := services.ServeFile(config.MinioBucket, filePath) 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
 		return
