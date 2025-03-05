@@ -27,8 +27,8 @@ func UploadFileHandler(c *gin.Context) {
 	customUuid := c.Request.PostFormValue("customUuid")
 	subRootFolder := c.Request.PostFormValue("subrootfolder")
 	filePath, err := services.UploadFile(subRootFolder, customUuid, fileContent, file.Filename)
-	fmt.Println(filePath)
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload file"})
 		return
 	}
