@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fileserver/config"
 	"fileserver/services"
 	"fmt"
 	"net/http"
@@ -51,7 +52,7 @@ func DownloadFileHandler(c *gin.Context) {
 		return
 	}
 
-	file, err := services.GetFile("destination", request.FilePath)
+	file, err := services.GetFile(config.BucketName, request.FilePath)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to get file: %v", err)})
 		return
@@ -80,9 +81,9 @@ func ServeFileHandler(c *gin.Context) {
     }
 
     filePath = strings.Trim(filePath, "\"")
-
-   	file, contentType, err := services.ServeFile("destination", filePath) 
+   	file, contentType, err := services.ServeFile(config.BucketName, filePath) 
 	if err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
 		return
 	}

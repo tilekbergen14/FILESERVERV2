@@ -56,7 +56,7 @@ func UploadFile(subfolder string, customUuid string, fileContent io.Reader, orig
 	}
 	_, err := mioClient.PutObject(
 		context.Background(), 
-		"destination",     
+		config.BucketName,     
 		filePath,     
 		fileContent,    
 		-1, 
@@ -72,7 +72,6 @@ func UploadFile(subfolder string, customUuid string, fileContent io.Reader, orig
 }
 
 func GetFile(bucketName, objectName string) ([]byte, error) {
-	fmt.Println(objectName)
 	object, err := mioClient.GetObject(context.Background(), bucketName, objectName, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
